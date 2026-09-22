@@ -88,6 +88,7 @@ const copy: Record<Language, {
   qrRegenerate: string;
   qrDownload: string;
   qrPlaceholder: string;
+  qrUpiHint: string;
   qrMaxNote: string;
   qrEmpty: string;
   qrSafety: string;
@@ -137,7 +138,8 @@ const copy: Record<Language, {
     qrGenerate: 'Generate QR code',
     qrRegenerate: 'Generate again',
     qrDownload: 'Download QR',
-    qrPlaceholder: 'yourname@bank',
+    qrPlaceholder: '9876543210@upi',
+    qrUpiHint: 'Use the real UPI ID shown inside your payment app — not a bank account number.',
     qrMaxNote: 'Maximum amount: ₹20,000',
     qrEmpty: 'Your QR will appear here',
     qrSafety: 'This tool runs in your browser. We do not save your UPI ID or amount.',
@@ -187,7 +189,8 @@ const copy: Record<Language, {
     qrGenerate: 'QR कोड बनाएं',
     qrRegenerate: 'फिर से बनाएं',
     qrDownload: 'QR डाउनलोड करें',
-    qrPlaceholder: 'yourname@bank',
+    qrPlaceholder: '9876543210@upi',
+    qrUpiHint: 'अपने payment app में दिखने वाला असली UPI ID डालें — bank account number नहीं।',
     qrMaxNote: 'अधिकतम रकम: ₹20,000',
     qrEmpty: 'आपका QR यहाँ दिखाई देगा',
     qrSafety: 'यह टूल आपके ब्राउज़र में चलता है। हम आपका UPI ID या रकम सेव नहीं करते।',
@@ -237,7 +240,8 @@ const copy: Record<Language, {
     qrGenerate: 'QR कोड तयार करा',
     qrRegenerate: 'पुन्हा तयार करा',
     qrDownload: 'QR डाउनलोड करा',
-    qrPlaceholder: 'yourname@bank',
+    qrPlaceholder: '9876543210@upi',
+    qrUpiHint: 'तुमच्या payment app मध्ये दिसणारा खरा UPI ID वापरा — bank account number नाही.',
     qrMaxNote: 'कमाल रक्कम: ₹20,000',
     qrEmpty: 'तुमचा QR येथे दिसेल',
     qrSafety: 'हे साधन तुमच्या ब्राउझरमध्ये चालते. आम्ही तुमचा UPI ID किंवा रक्कम सेव्ह करत नाही.',
@@ -369,8 +373,11 @@ function Home() {
     const cleanedUpiId = upiId.trim();
     const numericAmount = Number(amount);
 
-    if (!cleanedUpiId || !cleanedUpiId.includes('@') || /\s/.test(cleanedUpiId)) {
-      setQrError('Enter a valid UPI ID, like yourname@bank.');
+    const upiIdPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{1,254}@[A-Za-z0-9][A-Za-z0-9.-]{1,63}$/;
+    const isExampleUpiId = ['yourname@bank', '9876543210@upi', 'merchant@upi'].includes(cleanedUpiId.toLowerCase());
+
+    if (!upiIdPattern.test(cleanedUpiId) || isExampleUpiId) {
+      setQrError('Enter your real UPI ID from your payment app. The example text cannot receive payments.');
       setQrDataUrl(null);
       return;
     }
@@ -382,7 +389,8 @@ function Home() {
     }
 
     try {
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(cleanedUpiId)}&pn=${encodeURIComponent('Vendor Digital Help')}&am=${numericAmount.toFixed(2)}&cu=INR`;
+      const payeeName = cleanedUpiId.split('@')[0].replace(/[._-]+/g, ' ') || 'Vendor';
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(cleanedUpiId)}&pn=${encodeURIComponent(payeeName)}&am=${numericAmount.toFixed(2)}&cu=INR&mode=02&purpose=00`;
       const dataUrl = await QRCode.toDataURL(upiUrl, {
         width: 280,
         margin: 2,
@@ -565,6 +573,7 @@ function Home() {
                     aria-label={t.qrUpiLabel}
                     data-testid="input-upi-id"
                   />
+                  <small>{t.qrUpiHint}</small>
                 </label>
                 <label className="qr-field">
                   <span>{t.qrAmountLabel}</span>
