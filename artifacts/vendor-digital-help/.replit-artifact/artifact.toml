@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Vendor Digital Help"
+description = "A friendly, mobile-first guide that helps small Indian vendors start accepting UPI and QR payments, choose useful business apps, and stay safe online."
+version = "1.0.0"
+id = "artifacts/vendor-digital-help"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25389
+
+[services.development]
+run = "pnpm --filter @workspace/vendor-digital-help run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/vendor-digital-help", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/vendor-digital-help/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25389"
+BASE_PATH = "/"
