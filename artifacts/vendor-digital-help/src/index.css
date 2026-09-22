@@ -238,6 +238,47 @@
 .qr-result-copy span { max-width: 220px; overflow-wrap: anywhere; color: hsl(var(--muted-foreground)); font-family: var(--app-font-mono); font-size: .62rem; }
 .qr-download { min-height: 38px; font-size: .7rem; }
 
+.app-tutorial-section { background: hsl(var(--muted) / .46); border-block: 1px solid hsl(var(--border) / .72); }
+.upi-app-grid { display: grid; gap: 1rem; }
+.upi-app-card { display: flex; flex-direction: column; min-height: 235px; padding: 1.25rem; border: 1px solid hsl(var(--border)); border-radius: 20px; background: hsl(var(--card)); box-shadow: var(--shadow-sm); transition: transform .25s ease, box-shadow .25s ease; }
+.upi-app-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.upi-app-card-top { display: flex; align-items: center; justify-content: space-between; gap: .7rem; }
+.upi-app-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 13px; color: hsl(var(--primary)); background: hsl(var(--muted)); }
+.upi-app-icon-phonepe, .upi-app-icon-bhim { color: hsl(var(--primary)); background: hsl(var(--secondary) / .3); }
+.upi-app-icon-paytm, .upi-app-icon-amazon-pay { color: hsl(var(--accent)); background: hsl(var(--accent) / .12); }
+.upi-app-badge { color: hsl(var(--muted-foreground)); font-family: var(--app-font-mono); font-size: .58rem; letter-spacing: .04em; text-align: right; }
+.upi-app-card h3 { margin: 1rem 0 .5rem; font-size: 1rem; letter-spacing: -.03em; }
+.upi-app-card p { color: hsl(var(--muted-foreground)); font-size: .74rem; line-height: 1.65; }
+.upi-app-links { display: flex; flex-wrap: wrap; align-items: center; gap: .85rem; margin-top: auto; padding-top: 1.1rem; }
+.tutorial-link, .tutorial-video-link, .tutorial-official-link { display: inline-flex; align-items: center; gap: .35rem; color: hsl(var(--primary)); font-size: .68rem; font-weight: 800; text-decoration: none; }
+.tutorial-link:hover, .tutorial-video-link:hover, .tutorial-official-link:hover { color: hsl(var(--accent)); }
+.tutorial-link svg, .tutorial-video-link svg, .tutorial-official-link svg { flex: 0 0 auto; }
+
+.app-tutorial-modal { width: min(880px, 100%); }
+.tutorial-modal-heading { display: flex; align-items: center; gap: .85rem; padding-right: 2rem; }
+.tutorial-modal-heading .modal-icon { flex: 0 0 auto; margin: 0; }
+.tutorial-modal-heading h2 { margin: .25rem 0 0; }
+.tutorial-external-links { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; margin: .1rem 0 1.25rem; }
+.tutorial-video-link { min-height: 36px; padding: 0 .75rem; border-radius: 999px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+.tutorial-video-link:hover { color: hsl(var(--primary-foreground)); background: hsl(var(--accent)); }
+.tutorial-official-link { padding: .45rem 0; }
+.tutorial-steps { display: grid; gap: .9rem; }
+.tutorial-step { display: grid; gap: 1rem; padding: .85rem; border: 1px solid hsl(var(--border)); border-radius: 16px; background: hsl(var(--background)); }
+.tutorial-step-copy { padding: .15rem .2rem .2rem; }
+.tutorial-step-number { color: hsl(var(--accent)); font-family: var(--app-font-mono); font-size: .6rem; letter-spacing: .12em; }
+.tutorial-step-copy h3 { margin: .45rem 0 .45rem; font-size: .95rem; letter-spacing: -.03em; }
+.tutorial-step-copy p { color: hsl(var(--muted-foreground)); font-size: .74rem; line-height: 1.65; }
+.tutorial-tip { display: flex; align-items: flex-start; gap: .4rem; margin-top: .75rem; padding-top: .7rem; border-top: 1px solid hsl(var(--border)); color: hsl(var(--primary)); font-size: .64rem; line-height: 1.5; }
+.tutorial-art { min-height: 150px; padding: .7rem; overflow: hidden; border-radius: 12px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+.tutorial-art-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; color: hsl(42 35% 88%); font-family: var(--app-font-mono); font-size: .52rem; letter-spacing: .08em; text-transform: uppercase; }
+.tutorial-art-screen { display: grid; justify-items: center; gap: .55rem; width: 72%; min-height: 105px; margin: .8rem auto 0; padding: .8rem; border-radius: 13px 13px 5px 5px; background: hsl(42 45% 97%); color: hsl(var(--foreground)); box-shadow: 6px 6px 0 hsl(var(--secondary)); }
+.tutorial-art-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; color: hsl(var(--primary)); background: hsl(var(--muted)); }
+.tutorial-art-pin .tutorial-art-icon { color: hsl(var(--accent)); }
+.tutorial-art-qr .tutorial-art-icon { color: hsl(var(--accent)); background: hsl(var(--accent) / .14); }
+.tutorial-art-line { width: 64%; height: 5px; border-radius: 99px; background: hsl(var(--border)); }
+.tutorial-art-line.wide { width: 84%; height: 7px; background: hsl(var(--foreground) / .75); }
+.tutorial-art-button { width: 76%; height: 18px; border-radius: 99px; background: hsl(var(--primary)); }
+
 .process-grid { display: grid; gap: 1rem; }
 .process-card { position: relative; padding: 1.35rem 1.25rem 1.5rem; border-top: 3px solid hsl(var(--primary)); }
 .process-card:nth-child(2) { border-color: hsl(var(--secondary)); }
@@ -333,6 +374,8 @@
   .hero-actions { gap: 1rem; }
   .guide-grid { grid-template-columns: repeat(2, 1fr); }
   .qr-maker { padding: 1.5rem; }
+  .upi-app-grid { grid-template-columns: repeat(2, 1fr); }
+  .tutorial-step { grid-template-columns: 190px 1fr; align-items: center; }
   .process-grid { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
   .quote-facts { max-width: 450px; }
   .footer-grid { grid-template-columns: 1.7fr 1fr 1fr; }
@@ -346,6 +389,7 @@
   .phone { width: 260px; height: 420px; }
   .orbit { width: 350px; height: 350px; }
   .qr-maker { grid-template-columns: 1.05fr .95fr .72fr; gap: 1.2rem; padding: 1.5rem; align-items: stretch; }
+  .upi-app-grid { grid-template-columns: repeat(3, 1fr); }
   .chip-one { left: 0; }
   .chip-two { right: -1%; }
   .guide-grid { grid-template-columns: repeat(3, 1fr); }

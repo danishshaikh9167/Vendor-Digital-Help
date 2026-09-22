@@ -9,20 +9,25 @@ import {
   ChevronRight,
   CircleHelp,
   Clock3,
+  CreditCard,
   Download,
+  ExternalLink,
   Globe2,
   HandCoins,
   HeartHandshake,
   Landmark,
+  LockKeyhole,
   Menu,
   MessageCircleMore,
   QrCode,
+  PlayCircle,
   Search,
   ShieldCheck,
   Smartphone,
   Sparkles,
   Store,
   X,
+  WalletCards,
   type LucideIcon,
 } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -39,6 +44,7 @@ import {
 
 type Language = 'en' | 'hi' | 'mr';
 type Topic = 'all' | 'start' | 'pay' | 'grow';
+type TutorialVisual = 'phone' | 'bank' | 'pin' | 'qr' | 'safe';
 
 type Guide = {
   id: string;
@@ -48,6 +54,24 @@ type Guide = {
   description: string;
   time: string;
   steps: string[];
+};
+
+type TutorialStep = {
+  title: string;
+  description: string;
+  tip: string;
+  visual: TutorialVisual;
+};
+
+type UpiApp = {
+  id: string;
+  name: string;
+  badge: string;
+  description: string;
+  videoUrl: string;
+  officialUrl: string;
+  icon: LucideIcon;
+  steps: TutorialStep[];
 };
 
 const copy: Record<Language, {
@@ -79,6 +103,12 @@ const copy: Record<Language, {
   successText: string;
   quoteEyebrow: string;
   quote: string;
+  appsEyebrow: string;
+  appsTitle: string;
+  appsText: string;
+  openTutorial: string;
+  tutorialVideo: string;
+  officialGuide: string;
   qrMakerEyebrow: string;
   qrMakerTitle: string;
   qrMakerText: string;
@@ -130,6 +160,12 @@ const copy: Record<Language, {
     successText: 'Nice work. Start with the QR guide, then ask a trusted person to stand with you for the first payment.',
     quoteEyebrow: 'Why this exists',
     quote: '“I wanted something I could show my daughter when I got stuck — not another app telling me I was behind.”',
+    appsEyebrow: 'App-by-app setup',
+    appsTitle: 'Choose your UPI app. Take one clear step at a time.',
+    appsText: 'Registration looks a little different in each app. Open a tutorial below and follow it in order, from mobile verification to your first QR.',
+    openTutorial: 'Open step-by-step guide',
+    tutorialVideo: 'Tutorial video',
+    officialGuide: 'Official help',
     qrMakerEyebrow: 'A useful little tool',
     qrMakerTitle: 'Make a QR for a fixed amount.',
     qrMakerText: 'Enter your UPI ID and the amount your customer should pay. The QR keeps the amount ready so there is less room for mistakes.',
@@ -181,6 +217,12 @@ const copy: Record<Language, {
     successText: 'बहुत अच्छा। पहले QR गाइड देखें और पहले पेमेंट के समय किसी भरोसेमंद व्यक्ति को साथ रखें।',
     quoteEyebrow: 'यह क्यों है',
     quote: '“मैं चाहती थी कि अटकने पर बेटी को कुछ दिखा सकूँ — कोई ऐसा ऐप नहीं जो मुझे पीछे बताए।”',
+    appsEyebrow: 'ऐप के हिसाब से शुरुआत',
+    appsTitle: 'अपना UPI ऐप चुनें। एक बार में एक कदम।',
+    appsText: 'हर ऐप में registration थोड़ा अलग होता है। नीचे से एक गाइड खोलें और mobile verification से पहले QR तक क्रम से चलें।',
+    openTutorial: 'पूरी step-by-step गाइड',
+    tutorialVideo: 'Tutorial video',
+    officialGuide: 'Official help',
     qrMakerEyebrow: 'एक आसान टूल',
     qrMakerTitle: 'एक तय रकम के लिए QR बनाएं।',
     qrMakerText: 'अपना UPI ID और ग्राहक से ली जाने वाली रकम लिखें। रकम QR में शामिल होगी, जिससे गलती की गुंजाइश कम होगी।',
@@ -232,6 +274,12 @@ const copy: Record<Language, {
     successText: 'छान. आधी QR मार्गदर्शक पाहा आणि पहिल्या पेमेंटवेळी विश्वासू व्यक्तीला सोबत ठेवा.',
     quoteEyebrow: 'हे का आहे',
     quote: '“अडचण आली तर मुलीला दाखवता यावे असे मला वाटत होते — मागे असल्यासारखे वाटवणारे अजून एक अॅप नको.”',
+    appsEyebrow: 'अॅपनुसार सुरुवात',
+    appsTitle: 'तुमचे UPI अॅप निवडा. एका वेळी एक पाऊल.',
+    appsText: 'प्रत्येक अॅपमध्ये registration थोडे वेगळे असते. खालील मार्गदर्शक उघडा आणि mobile verification पासून QR पर्यंत क्रमाने जा.',
+    openTutorial: 'पूर्ण step-by-step मार्गदर्शक',
+    tutorialVideo: 'Tutorial video',
+    officialGuide: 'Official help',
     qrMakerEyebrow: 'एक उपयुक्त साधन',
     qrMakerTitle: 'ठराविक रकमेसाठी QR तयार करा.',
     qrMakerText: 'तुमचा UPI ID आणि ग्राहकाने द्यायची रक्कम लिहा. रक्कम QR मध्ये समाविष्ट होईल, त्यामुळे चुका कमी होतील.',
@@ -313,6 +361,84 @@ const guides: Guide[] = [
   },
 ];
 
+const upiApps: UpiApp[] = [
+  {
+    id: 'google-pay',
+    name: 'Google Pay',
+    badge: 'Google Pay / GPay',
+    description: 'Set up GPay with the mobile number linked to your bank, then find your UPI ID and QR.',
+    icon: Smartphone,
+    videoUrl: 'https://www.youtube.com/results?search_query=Google+Pay+India+UPI+registration+add+bank+account+tutorial',
+    officialUrl: 'https://support.google.com/pay/india/answer/7293696?co=GENIE.Platform%3DAndroid&hl=en',
+    steps: [
+      { title: 'Install and register', description: 'Install Google Pay from the official app store. Open it, choose the mobile number linked to your bank, and allow the verification SMS.', tip: 'The SIM with your bank-linked number must be in this phone.', visual: 'phone' },
+      { title: 'Add your bank account', description: 'Tap your profile picture, choose Add bank account, select your bank, and let GPay verify the number by SMS.', tip: 'If your bank is not listed, check your internet and try again later.', visual: 'bank' },
+      { title: 'Create your UPI PIN', description: 'Select the account, tap Set UPI PIN, and enter the debit card details requested by the app. Complete the OTP step.', tip: 'Your UPI PIN is private. No customer, caller, or helper needs to know it.', visual: 'pin' },
+      { title: 'Find your UPI ID and QR', description: 'Open your profile and select the bank account. Your UPI ID and payment QR are shown there. Use the QR generator on this page for a fixed amount.', tip: 'Before giving goods, check the payment inside GPay or your bank message.', visual: 'qr' },
+    ],
+  },
+  {
+    id: 'phonepe',
+    name: 'PhonePe',
+    badge: 'PhonePe',
+    description: 'A clear setup path for PhonePe users who want to link a bank account and receive payments.',
+    icon: WalletCards,
+    videoUrl: 'https://www.youtube.com/results?search_query=PhonePe+UPI+registration+add+bank+account+tutorial',
+    officialUrl: 'https://www.phonepe.com/how-to-pay/add-bank-account',
+    steps: [
+      { title: 'Install and verify your number', description: 'Install PhonePe from the official app store. Open it with the mobile number that is registered with your bank.', tip: 'Do not use a different number just because it is active on another phone.', visual: 'phone' },
+      { title: 'Link your bank account', description: 'Tap your profile picture, open Bank Accounts or Add Bank Account, choose your bank, and allow SMS verification.', tip: 'Keep the phone connected to the internet while the bank account is being found.', visual: 'bank' },
+      { title: 'Set a UPI PIN', description: 'Choose the linked account and select Set or Reset UPI PIN. Enter your debit card information and the OTP requested.', tip: 'Never type your UPI PIN when receiving money.', visual: 'pin' },
+      { title: 'Open My QR', description: 'From the PhonePe home screen, choose your QR or Receive Money option. Check the UPI ID shown before printing or sharing it.', tip: 'Scan your own QR with a trusted person once before putting it at the counter.', visual: 'qr' },
+    ],
+  },
+  {
+    id: 'paytm',
+    name: 'Paytm',
+    badge: 'Paytm UPI',
+    description: 'Learn the Paytm UPI setup flow and how to check your account before accepting a payment.',
+    icon: HandCoins,
+    videoUrl: 'https://www.youtube.com/results?search_query=Paytm+UPI+registration+add+bank+account+tutorial',
+    officialUrl: 'https://paytm.com/blog/money-transfer/upi-money-transfer/upi-registration-set-up-upi-account',
+    steps: [
+      { title: 'Open Paytm UPI', description: 'Install the Paytm app, sign in with your bank-linked mobile number, and open the UPI or Payments section.', tip: 'Only download Paytm from the official app store.', visual: 'phone' },
+      { title: 'Choose your bank', description: 'Tap Add bank account or Activate UPI, select your bank, and let Paytm verify the mobile number by SMS.', tip: 'If more than one account appears, choose the account you use for your shop.', visual: 'bank' },
+      { title: 'Make a UPI PIN', description: 'Select your account, tap Create UPI PIN, and complete the debit card and OTP steps shown in the app.', tip: 'Cover the screen when entering your PIN at a busy counter.', visual: 'pin' },
+      { title: 'Find your UPI QR', description: 'Go to UPI or Receive Money and open your personal QR. Check the linked UPI ID and use the fixed-amount QR maker above when needed.', tip: 'A payment screenshot is not proof. Check Paytm itself.', visual: 'qr' },
+    ],
+  },
+  {
+    id: 'bhim',
+    name: 'BHIM',
+    badge: 'BHIM UPI',
+    description: 'The official BHIM app guide for registration, bank linking, UPI PIN setup, and receiving money.',
+    icon: Landmark,
+    videoUrl: 'https://www.youtube.com/results?search_query=BHIM+UPI+registration+add+bank+account+tutorial',
+    officialUrl: 'https://www.bhimupi.org.in/',
+    steps: [
+      { title: 'Install and choose a language', description: 'Install BHIM from the official app store, choose a language, and verify the mobile number linked to your bank.', tip: 'Ask a trusted person to help read the screen, but enter your own PIN.', visual: 'phone' },
+      { title: 'Select your bank account', description: 'Open Bank Account or My Profile, choose your bank, and let BHIM find the account linked to your mobile number.', tip: 'The bank account and mobile number must match for setup to work.', visual: 'bank' },
+      { title: 'Set the UPI PIN', description: 'Choose Set UPI PIN and enter the debit card details and OTP requested by BHIM.', tip: 'A UPI PIN approves money going out. It is not needed to receive money.', visual: 'pin' },
+      { title: 'Use My QR', description: 'Open My QR or Receive Money to show your BHIM QR. Check the name and UPI ID before sharing it.', tip: 'Check the incoming payment in BHIM or your bank statement before handing over goods.', visual: 'qr' },
+    ],
+  },
+  {
+    id: 'amazon-pay',
+    name: 'Amazon Pay',
+    badge: 'Amazon Pay UPI',
+    description: 'A simple Amazon Pay UPI setup guide for users who want to connect their bank inside the Amazon app.',
+    icon: CreditCard,
+    videoUrl: 'https://www.youtube.com/results?search_query=Amazon+Pay+UPI+registration+add+bank+account+tutorial',
+    officialUrl: 'https://www.amazon.in/gp/help/customer/display.html?nodeId=TjphZTDDIuxzTI5Oej',
+    steps: [
+      { title: 'Open Amazon Pay', description: 'Open the Amazon app, go to Amazon Pay, and choose the UPI setup option. Verify the mobile number linked to your bank.', tip: 'Keep the same SIM in the phone during setup.', visual: 'phone' },
+      { title: 'Connect your bank', description: 'Select your bank from the list and allow the app to send the verification SMS. Choose the account you want to use.', tip: 'If the account is not found, confirm your bank has the same mobile number.', visual: 'bank' },
+      { title: 'Create your UPI PIN', description: 'Follow the debit card and OTP instructions to create the UPI PIN for the selected account.', tip: 'Amazon or a customer will never need your UPI PIN to send money to you.', visual: 'pin' },
+      { title: 'Check the receive option', description: 'Open Amazon Pay UPI and look for your UPI ID or QR. If your version does not show a receive QR, use the QR from your bank or another UPI app.', tip: 'App menus can change. Use the official help link if a button has moved.', visual: 'qr' },
+    ],
+  },
+];
+
 const checklist = [
   { id: 'phone', title: 'I have a phone I can use every day', detail: 'It has a screen lock and enough battery for the day.' },
   { id: 'number', title: 'My mobile number is linked to my bank account', detail: 'If you are not sure, ask your bank — never guess your PIN.' },
@@ -330,6 +456,34 @@ const faqs = [
 
 const queryClient = new QueryClient();
 
+const tutorialVisuals: Record<TutorialVisual, { icon: LucideIcon; label: string }> = {
+  phone: { icon: Smartphone, label: 'Mobile verification' },
+  bank: { icon: Landmark, label: 'Choose your bank' },
+  pin: { icon: LockKeyhole, label: 'Private UPI PIN' },
+  qr: { icon: QrCode, label: 'Your payment QR' },
+  safe: { icon: ShieldCheck, label: 'Safety check' },
+};
+
+function TutorialStepArt({ visual, step, title }: { visual: TutorialVisual; step: number; title: string }) {
+  const art = tutorialVisuals[visual];
+  const ArtIcon = art.icon;
+
+  return (
+    <div className={`tutorial-art tutorial-art-${visual}`} role="img" aria-label={`${title}: ${art.label}`}>
+      <div className="tutorial-art-top">
+        <span>STEP {String(step).padStart(2, '0')}</span>
+        <span>{art.label}</span>
+      </div>
+      <div className="tutorial-art-screen">
+        <div className="tutorial-art-icon"><ArtIcon size={24} /></div>
+        <div className="tutorial-art-line wide" />
+        <div className="tutorial-art-line" />
+        <div className="tutorial-art-button" />
+      </div>
+    </div>
+  );
+}
+
 function Logo() {
   return (
     <div className="brand-mark" data-testid="brand-vendor-digital-help">
@@ -345,6 +499,7 @@ function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeTopic, setActiveTopic] = useState<Topic>('all');
   const [openGuide, setOpenGuide] = useState<Guide | null>(null);
+  const [openUpiApp, setOpenUpiApp] = useState<UpiApp | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [helpOpen, setHelpOpen] = useState(false);
@@ -622,6 +777,39 @@ function Home() {
           </div>
         </section>
 
+        <section className="section app-tutorial-section" id="upi-apps">
+          <div className="section-wrap">
+            <div className="section-heading">
+              <div className="eyebrow eyebrow-accent">{t.appsEyebrow}</div>
+              <h2>{t.appsTitle}</h2>
+              <p>{t.appsText}</p>
+            </div>
+            <div className="upi-app-grid" data-testid="upi-app-grid">
+              {upiApps.map((app) => {
+                const AppIcon = app.icon;
+                return (
+                  <article className="upi-app-card" key={app.id} data-testid={`card-upi-app-${app.id}`}>
+                    <div className="upi-app-card-top">
+                      <div className={`upi-app-icon upi-app-icon-${app.id}`}><AppIcon size={20} /></div>
+                      <span className="upi-app-badge">{app.badge}</span>
+                    </div>
+                    <h3>{app.name}</h3>
+                    <p>{app.description}</p>
+                    <div className="upi-app-links">
+                      <button className="guide-open" onClick={() => setOpenUpiApp(app)} data-testid={`button-open-upi-tutorial-${app.id}`}>
+                        {t.openTutorial} <ChevronRight size={15} />
+                      </button>
+                      <a href={app.videoUrl} target="_blank" rel="noreferrer" className="tutorial-link" data-testid={`link-upi-video-${app.id}`}>
+                        <PlayCircle size={14} /> {t.tutorialVideo}
+                      </a>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         <section className="section section-tint" id="how-it-works">
           <div className="section-wrap">
             <div className="section-heading center">
@@ -764,6 +952,44 @@ function Home() {
               {openGuide.steps.map((step, index) => <li key={`${openGuide.id}-${index}`}>{step}</li>)}
             </ol>
             <div className="modal-footnote"><ShieldCheck size={15} /> If anything feels unusual, stop and ask someone you trust. A real support person will not ask for your PIN.</div>
+          </article>
+        </div>
+      )}
+
+      {openUpiApp && (
+        <div className="modal-backdrop" onClick={(event) => { if (event.target === event.currentTarget) setOpenUpiApp(null); }} data-testid="modal-upi-tutorial">
+          <article className="modal app-tutorial-modal" role="dialog" aria-modal="true" aria-labelledby="upi-tutorial-title">
+            <button className="modal-close" onClick={() => setOpenUpiApp(null)} aria-label="Close app tutorial" data-testid="button-close-upi-tutorial"><X size={17} /></button>
+            <div className="tutorial-modal-heading">
+              <div className="modal-icon"><openUpiApp.icon size={22} /></div>
+              <div>
+                <div className="eyebrow eyebrow-accent">{openUpiApp.badge}</div>
+                <h2 id="upi-tutorial-title">{openUpiApp.name} setup</h2>
+              </div>
+            </div>
+            <p className="modal-intro">Follow these steps in order. Button names can move after an app update, but the flow stays similar.</p>
+            <div className="tutorial-external-links">
+              <a href={openUpiApp.videoUrl} target="_blank" rel="noreferrer" className="tutorial-video-link" data-testid="link-tutorial-video">
+                <PlayCircle size={16} /> {t.tutorialVideo} <ExternalLink size={13} />
+              </a>
+              <a href={openUpiApp.officialUrl} target="_blank" rel="noreferrer" className="tutorial-official-link" data-testid="link-official-guide">
+                {t.officialGuide} <ExternalLink size={13} />
+              </a>
+            </div>
+            <div className="tutorial-steps" data-testid="tutorial-steps">
+              {openUpiApp.steps.map((step, index) => (
+                <article className="tutorial-step" key={`${openUpiApp.id}-${step.title}`}>
+                  <TutorialStepArt visual={step.visual} step={index + 1} title={step.title} />
+                  <div className="tutorial-step-copy">
+                    <div className="tutorial-step-number">STEP {String(index + 1).padStart(2, '0')}</div>
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                    <div className="tutorial-tip"><ShieldCheck size={14} /> {step.tip}</div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="modal-footnote"><ShieldCheck size={15} /> Never share your UPI PIN, OTP, debit card details, or screen with a caller.</div>
           </article>
         </div>
       )}
