@@ -1,4 +1,5 @@
 import { type ReactNode, useMemo, useState } from 'react';
+import QRCode from 'qrcode';
 import {
   ArrowRight,
   BadgeCheck,
@@ -8,6 +9,7 @@ import {
   ChevronRight,
   CircleHelp,
   Clock3,
+  Download,
   Globe2,
   HandCoins,
   HeartHandshake,
@@ -77,6 +79,18 @@ const copy: Record<Language, {
   successText: string;
   quoteEyebrow: string;
   quote: string;
+  qrMakerEyebrow: string;
+  qrMakerTitle: string;
+  qrMakerText: string;
+  qrUpiLabel: string;
+  qrAmountLabel: string;
+  qrGenerate: string;
+  qrRegenerate: string;
+  qrDownload: string;
+  qrPlaceholder: string;
+  qrMaxNote: string;
+  qrEmpty: string;
+  qrSafety: string;
   faqEyebrow: string;
   faqTitle: string;
   footerText: string;
@@ -115,6 +129,18 @@ const copy: Record<Language, {
     successText: 'Nice work. Start with the QR guide, then ask a trusted person to stand with you for the first payment.',
     quoteEyebrow: 'Why this exists',
     quote: '“I wanted something I could show my daughter when I got stuck — not another app telling me I was behind.”',
+    qrMakerEyebrow: 'A useful little tool',
+    qrMakerTitle: 'Make a QR for a fixed amount.',
+    qrMakerText: 'Enter your UPI ID and the amount your customer should pay. The QR keeps the amount ready so there is less room for mistakes.',
+    qrUpiLabel: 'Your UPI ID',
+    qrAmountLabel: 'Amount in rupees',
+    qrGenerate: 'Generate QR code',
+    qrRegenerate: 'Generate again',
+    qrDownload: 'Download QR',
+    qrPlaceholder: 'yourname@bank',
+    qrMaxNote: 'Maximum amount: ₹20,000',
+    qrEmpty: 'Your QR will appear here',
+    qrSafety: 'This tool runs in your browser. We do not save your UPI ID or amount.',
     faqEyebrow: 'Good to know',
     faqTitle: 'Questions people ask before they start',
     footerText: 'Built with patience for the corner shops, carts, counters, and kitchens that make a neighbourhood feel like home.',
@@ -153,6 +179,18 @@ const copy: Record<Language, {
     successText: 'बहुत अच्छा। पहले QR गाइड देखें और पहले पेमेंट के समय किसी भरोसेमंद व्यक्ति को साथ रखें।',
     quoteEyebrow: 'यह क्यों है',
     quote: '“मैं चाहती थी कि अटकने पर बेटी को कुछ दिखा सकूँ — कोई ऐसा ऐप नहीं जो मुझे पीछे बताए।”',
+    qrMakerEyebrow: 'एक आसान टूल',
+    qrMakerTitle: 'एक तय रकम के लिए QR बनाएं।',
+    qrMakerText: 'अपना UPI ID और ग्राहक से ली जाने वाली रकम लिखें। रकम QR में शामिल होगी, जिससे गलती की गुंजाइश कम होगी।',
+    qrUpiLabel: 'आपका UPI ID',
+    qrAmountLabel: 'रकम (रुपये में)',
+    qrGenerate: 'QR कोड बनाएं',
+    qrRegenerate: 'फिर से बनाएं',
+    qrDownload: 'QR डाउनलोड करें',
+    qrPlaceholder: 'yourname@bank',
+    qrMaxNote: 'अधिकतम रकम: ₹20,000',
+    qrEmpty: 'आपका QR यहाँ दिखाई देगा',
+    qrSafety: 'यह टूल आपके ब्राउज़र में चलता है। हम आपका UPI ID या रकम सेव नहीं करते।',
     faqEyebrow: 'जानना अच्छा है',
     faqTitle: 'शुरू करने से पहले पूछे जाने वाले सवाल',
     footerText: 'उन छोटी दुकानों, ठेलों और घर की रसोइयों के लिए, जो मोहल्ले को अपना बनाते हैं।',
@@ -191,6 +229,18 @@ const copy: Record<Language, {
     successText: 'छान. आधी QR मार्गदर्शक पाहा आणि पहिल्या पेमेंटवेळी विश्वासू व्यक्तीला सोबत ठेवा.',
     quoteEyebrow: 'हे का आहे',
     quote: '“अडचण आली तर मुलीला दाखवता यावे असे मला वाटत होते — मागे असल्यासारखे वाटवणारे अजून एक अॅप नको.”',
+    qrMakerEyebrow: 'एक उपयुक्त साधन',
+    qrMakerTitle: 'ठराविक रकमेसाठी QR तयार करा.',
+    qrMakerText: 'तुमचा UPI ID आणि ग्राहकाने द्यायची रक्कम लिहा. रक्कम QR मध्ये समाविष्ट होईल, त्यामुळे चुका कमी होतील.',
+    qrUpiLabel: 'तुमचा UPI ID',
+    qrAmountLabel: 'रक्कम (रुपयांत)',
+    qrGenerate: 'QR कोड तयार करा',
+    qrRegenerate: 'पुन्हा तयार करा',
+    qrDownload: 'QR डाउनलोड करा',
+    qrPlaceholder: 'yourname@bank',
+    qrMaxNote: 'कमाल रक्कम: ₹20,000',
+    qrEmpty: 'तुमचा QR येथे दिसेल',
+    qrSafety: 'हे साधन तुमच्या ब्राउझरमध्ये चालते. आम्ही तुमचा UPI ID किंवा रक्कम सेव्ह करत नाही.',
     faqEyebrow: 'उपयोगी माहिती',
     faqTitle: 'सुरुवात करण्यापूर्वी विचारले जाणारे प्रश्न',
     footerText: 'आपला परिसर घरासारखा वाटावा यासाठी काम करणाऱ्या छोट्या दुकानांसाठी, गाड्यांसाठी आणि घरगुती व्यवसायांसाठी.',
@@ -295,6 +345,10 @@ function Home() {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [helpOpen, setHelpOpen] = useState(false);
   const [helpSent, setHelpSent] = useState(false);
+  const [upiId, setUpiId] = useState('');
+  const [amount, setAmount] = useState('');
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrError, setQrError] = useState('');
   const t = copy[language];
   const completeCount = checklist.filter((item) => checked[item.id]).length;
   const filteredGuides = useMemo(
@@ -309,6 +363,46 @@ function Home() {
 
   const toggleCheck = (id: string) => {
     setChecked((current) => ({ ...current, [id]: !current[id] }));
+  };
+
+  const generateQr = async () => {
+    const cleanedUpiId = upiId.trim();
+    const numericAmount = Number(amount);
+
+    if (!cleanedUpiId || !cleanedUpiId.includes('@') || /\s/.test(cleanedUpiId)) {
+      setQrError('Enter a valid UPI ID, like yourname@bank.');
+      setQrDataUrl(null);
+      return;
+    }
+
+    if (!Number.isFinite(numericAmount) || numericAmount < 1 || numericAmount > 20000) {
+      setQrError('Enter an amount between ₹1 and ₹20,000.');
+      setQrDataUrl(null);
+      return;
+    }
+
+    try {
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(cleanedUpiId)}&pn=${encodeURIComponent('Vendor Digital Help')}&am=${numericAmount.toFixed(2)}&cu=INR`;
+      const dataUrl = await QRCode.toDataURL(upiUrl, {
+        width: 280,
+        margin: 2,
+        errorCorrectionLevel: 'M',
+        color: { dark: '#162338', light: '#fffdf7' },
+      });
+      setQrDataUrl(dataUrl);
+      setQrError('');
+    } catch {
+      setQrError('We could not make that QR yet. Please check the details and try again.');
+      setQrDataUrl(null);
+    }
+  };
+
+  const downloadQr = () => {
+    if (!qrDataUrl) return;
+    const link = document.createElement('a');
+    link.href = qrDataUrl;
+    link.download = `vendor-payment-qr-${amount || 'amount'}.png`;
+    link.click();
   };
 
   return (
@@ -451,6 +545,70 @@ function Home() {
                   </article>
                 );
               })}
+            </div>
+            <div className="qr-maker" id="qr-maker" data-testid="qr-maker">
+              <div className="qr-maker-copy">
+                <div className="eyebrow eyebrow-accent">{t.qrMakerEyebrow}</div>
+                <h3>{t.qrMakerTitle}</h3>
+                <p>{t.qrMakerText}</p>
+                <div className="qr-safety"><ShieldCheck size={15} /> {t.qrSafety}</div>
+              </div>
+              <form className="qr-form" onSubmit={(event) => { event.preventDefault(); void generateQr(); }}>
+                <label className="qr-field">
+                  <span>{t.qrUpiLabel}</span>
+                  <input
+                    value={upiId}
+                    onChange={(event) => { setUpiId(event.target.value); setQrError(''); }}
+                    placeholder={t.qrPlaceholder}
+                    inputMode="email"
+                    autoComplete="off"
+                    aria-label={t.qrUpiLabel}
+                    data-testid="input-upi-id"
+                  />
+                </label>
+                <label className="qr-field">
+                  <span>{t.qrAmountLabel}</span>
+                  <div className="amount-input">
+                    <span aria-hidden="true">₹</span>
+                    <input
+                      value={amount}
+                      onChange={(event) => { setAmount(event.target.value.replace(/[^\d.]/g, '')); setQrError(''); }}
+                      placeholder="500"
+                      type="number"
+                      inputMode="decimal"
+                      min="1"
+                      max="20000"
+                      step="0.01"
+                      aria-label={t.qrAmountLabel}
+                      data-testid="input-qr-amount"
+                    />
+                  </div>
+                  <small>{t.qrMaxNote}</small>
+                </label>
+                <button className="button-primary qr-submit" type="submit" data-testid="button-generate-qr">
+                  {qrDataUrl ? t.qrRegenerate : t.qrGenerate} <ArrowRight size={15} />
+                </button>
+                {qrError && <p className="qr-error" role="alert" data-testid="text-qr-error">{qrError}</p>}
+              </form>
+              <div className={`qr-result ${qrDataUrl ? 'has-qr' : ''}`} data-testid="qr-result">
+                {qrDataUrl ? (
+                  <>
+                    <img src={qrDataUrl} alt={`UPI payment QR for ₹${amount}`} data-testid="img-generated-qr" />
+                    <div className="qr-result-copy">
+                      <strong>₹{Number(amount).toLocaleString('en-IN')}</strong>
+                      <span>{upiId.trim()}</span>
+                    </div>
+                    <button className="button-secondary qr-download" type="button" onClick={downloadQr} data-testid="button-download-qr">
+                      <Download size={15} /> {t.qrDownload}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <QrCode size={46} strokeWidth={1.25} />
+                    <span>{t.qrEmpty}</span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </section>
