@@ -77,7 +77,7 @@ type UpiApp = {
 const copy: Record<Language, {
   language: string;
   announcement: string;
-  nav: { guides: string; checklist: string; about: string; ask: string };
+  nav: { guides: string; tutorials: string; checklist: string; about: string; ask: string };
   heroKicker: string;
   heroTitleA: string;
   heroTitleB: string;
@@ -134,7 +134,7 @@ const copy: Record<Language, {
   en: {
     language: 'English',
     announcement: 'A patient guide for your first digital payment',
-    nav: { guides: 'Guides', checklist: 'Readiness check', about: 'Why this exists', ask: 'Ask a question' },
+    nav: { guides: 'Guides', tutorials: 'App tutorials', checklist: 'Readiness check', about: 'Why this exists', ask: 'Ask a question' },
     heroKicker: 'For the people who keep local India moving',
     heroTitleA: 'Digital payments,',
     heroTitleB: 'without the headache.',
@@ -191,7 +191,7 @@ const copy: Record<Language, {
   hi: {
     language: 'हिन्दी',
     announcement: 'आपके पहले डिजिटल पेमेंट के लिए आसान मदद',
-    nav: { guides: 'गाइड', checklist: 'तैयारी जाँचें', about: 'यह क्यों है', ask: 'सवाल पूछें' },
+    nav: { guides: 'गाइड', tutorials: 'ऐप ट्यूटोरियल', checklist: 'तैयारी जाँचें', about: 'यह क्यों है', ask: 'सवाल पूछें' },
     heroKicker: 'जो लोग अपने बाज़ार को चलाते हैं, उनके लिए',
     heroTitleA: 'डिजिटल पेमेंट,',
     heroTitleB: 'बिना परेशानी के।',
@@ -248,7 +248,7 @@ const copy: Record<Language, {
   mr: {
     language: 'मराठी',
     announcement: 'तुमच्या पहिल्या डिजिटल पेमेंटसाठी सोपी मदत',
-    nav: { guides: 'मार्गदर्शक', checklist: 'तयारी तपासा', about: 'हे का आहे', ask: 'प्रश्न विचारा' },
+    nav: { guides: 'मार्गदर्शक', tutorials: 'अॅप ट्यूटोरियल', checklist: 'तयारी तपासा', about: 'हे का आहे', ask: 'प्रश्न विचारा' },
     heroKicker: 'आपला बाजार चालवणाऱ्या लोकांसाठी',
     heroTitleA: 'डिजिटल पेमेंट,',
     heroTitleB: 'आता सोप्या पद्धतीने.',
@@ -584,6 +584,7 @@ function Home() {
           </button>
           <nav className="nav-links" aria-label="Primary navigation">
             <button className="nav-link border-0 bg-transparent p-0" onClick={() => jumpTo('guides')} data-testid="link-guides">{t.nav.guides}</button>
+            <button className="nav-link border-0 bg-transparent p-0" onClick={() => jumpTo('upi-apps')} data-testid="link-upi-tutorials">{t.nav.tutorials}</button>
             <button className="nav-link border-0 bg-transparent p-0" onClick={() => jumpTo('readiness')} data-testid="link-checklist">{t.nav.checklist}</button>
             <button className="nav-link border-0 bg-transparent p-0" onClick={() => jumpTo('why')} data-testid="link-about">{t.nav.about}</button>
           </nav>
@@ -618,6 +619,7 @@ function Home() {
           <div className="mobile-nav">
             <div className="section-wrap">
               <button className="border-0 bg-transparent p-0" onClick={() => jumpTo('guides')} data-testid="mobile-link-guides">{t.nav.guides}</button>
+              <button className="border-0 bg-transparent p-0" onClick={() => jumpTo('upi-apps')} data-testid="mobile-link-upi-tutorials">{t.nav.tutorials}</button>
               <button className="border-0 bg-transparent p-0" onClick={() => jumpTo('readiness')} data-testid="mobile-link-checklist">{t.nav.checklist}</button>
               <button className="border-0 bg-transparent p-0" onClick={() => jumpTo('why')} data-testid="mobile-link-about">{t.nav.about}</button>
               <button className="border-0 bg-transparent p-0" onClick={() => { setHelpOpen(true); setMobileOpen(false); }} data-testid="mobile-button-ask">{t.nav.ask}</button>
@@ -925,6 +927,7 @@ function Home() {
               <h4>Explore</h4>
               <div className="footer-links">
                 <button onClick={() => jumpTo('guides')} data-testid="footer-link-guides">{t.nav.guides}</button>
+                <button onClick={() => jumpTo('upi-apps')} data-testid="footer-link-upi-tutorials">{t.nav.tutorials}</button>
                 <button onClick={() => jumpTo('readiness')} data-testid="footer-link-checklist">{t.nav.checklist}</button>
                 <button onClick={() => jumpTo('faq')} data-testid="footer-link-faq">Questions & answers</button>
               </div>
